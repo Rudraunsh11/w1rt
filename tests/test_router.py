@@ -128,9 +128,20 @@ def test_dict_reply_and_bad_changes_are_skipped(t):
         {"op": "set_env", "path": "BAD NAME", "content": "x"},
         {"op": "delete_file", "path": "/home/admin/notes.txt"},
     ]}
-    assert router.run(t.s, "weird") == "ok"
+    assert router.run(t.s, "weird") == "ok\n"
     assert t.s.read_file("/home/admin/notes.txt") is None
     assert "/" in t.s.fs and "BAD NAME" not in t.s.env
+
+
+def test_model_output_gets_final_newline_handler_bytes_do_not(t, monkeypatch):
+    t.reply = Result("active (running)")
+    assert router.run(t.s, "systemctl status nginx") == "active (running)\n"
+    router.run(t.s, "systemctl status nginx > st.txt")
+    assert t.s.read_file("st.txt") == "active (running)\n"
+    t.reply = Result("")
+    assert router.run(t.s, "true") == ""                       # empty stays empty
+    monkeypatch.setitem(router.HANDLERS, "printf", lambda s, argv: Result("no-newline"))
+    assert router.run(t.s, "printf x") == "no-newline"        # handler bytes exact
 
 
 def test_malformed_reply_is_not_found(t):
