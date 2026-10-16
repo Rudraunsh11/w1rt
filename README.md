@@ -8,10 +8,10 @@ try with MITRE ATT&CK tags.
 - Only unknown commands go to a small local model (Ollama, Qwen2.5 1.5B).
 - Every model reply is validated before the state changes.
 
-> Integration status: 160 tests pass, 3 skipped on macOS/Python 3.14.6.
-> Production state/router, canary registry, 14 command handlers, JSONL logging and
-> the HTML report work together. SSH/model/checker integration awaits Aayush's
-> repaired PR #2; this is not yet a completed live-model demo.
+> **Integration status (update at submit):** state, router, 14 code handlers, SSH
+> front, model adapter with validator and guard, canary planting in SSH sessions,
+> JSONL logging, the HTML report and the benchmark runner are all on `main`.
+> Benchmark: **not run yet**. Demo video: **not recorded yet**.
 
 ## Safety
 Loopback only (`127.0.0.1`), visitor input is never executed, no real credentials.
@@ -25,26 +25,32 @@ Python 3.11+ source target; an actual 3.11/Windows run remains VERIFY.
 ```sh
 git clone https://github.com/Rudraunsh11/w1rt.git
 cd w1rt
-git switch feat/integration-contracts
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv .venv
+.venv\Scripts\activate            # macOS/Linux: source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m pytest -q
+
+# Local model (Ollama must listen on 127.0.0.1:11434 only)
+ollama pull qwen2.5:1.5b
+
+# Terminal 1: start the decoy (always binds 127.0.0.1)
+python -m canarynet --port 2222
+
+# Terminal 2: connect as a visitor (decoy login admin / admin)
+ssh -p 2222 admin@127.0.0.1
+
+# After a session: build the HTML report from logs/events.jsonl
 python -m canarynet.report
 ```
 
-The integration branch must be published before remote checkout is available.
-On Windows activate with `.venv\Scripts\activate`. On macOS, if Git is missing,
-run `xcode-select --install` in Terminal and complete installation first.
+`python -m canarynet` prints a warning if any teammate module is still a stand-in;
+a release run must show no warning. The decoy logins are fake and exist only
+inside the decoy.
 
 The report writes `report.html` from `logs/events.jsonl`; open the file in a
 browser (`open report.html` on macOS). An absent log produces an explanatory empty
 report. Valid events are grouped by session and ordered in UTC; malformed lines
 are skipped and counted. Visitor text is escaped and no external assets are used.
-
-Once SSH merges, start with `python -m canarynet --port 2222`, then connect only
-to `ssh -p 2222 admin@127.0.0.1` using synthetic credentials. The CLI has no host
-option. It currently cannot start because the SSH front is not merged.
 
 Rudraunsh's runtime modules are standard-library only: JSON/time/HTML utilities
 format events and reports, POSIX path/shlex/regex utilities inspect simulated
@@ -77,28 +83,61 @@ KERNEL constant is currently `5.15.0-58-generic`; align it and the SSH banner be
 claiming every host fact agrees. File dates/permissions and ps entries are synthetic.
 
 ## Results
-The comparison is a **last-10-command baseline**, never a Cowrie test. Snehank's
-real baseline helper is merged, but the runner/checkers still need repair and
-integration. Run these only after the repaired benchmark package arrives:
+Multi-step consistency benchmark: CanaryNet Lite (code-owned state, model only for
+unknown commands) versus a **last-10-commands baseline** (same model, persona,
+schema and decoding settings; its only memory is the last 10 commands with their
+outputs; no code handlers). This is our own baseline, **not a test of Cowrie** or
+any other project.
+
+| Metric | CanaryNet Lite | Last-10-commands baseline |
+|---|---|---|
+| Checks passed (pass rate) | _TBD_ | _TBD_ |
+| Contradictions per 100 commands | _TBD_ | _TBD_ |
+| Share answered by code | _TBD_ | 0% by design |
+| Median latency per command | _TBD_ | _TBD_ |
+| Commands run | _TBD_ | _TBD_ |
+
+Model: `qwen2.5:1.5b` via Ollama, temperature 0, seed 42. Hardware: _TBD (from
+`host_metadata` in `bench/results_*.json`)_.
+
+**Planned procedure (not yet run):** both modes once each, on the same machine,
+from the same commit; record that commit hash here (_TBD_). Warm-up is manual
+(`ollama run qwen2.5:1.5b "say ok"`); `bench.run` does not warm up.
+
+Reproduce (needs PR #2 merged and Ollama running; from the repo root):
 
 ```sh
-python -m bench.run --mode ours
-python -m bench.run --mode baseline
+python -m bench.run --mode ours       # writes bench/results_ours.json
+python -m bench.run --mode baseline   # writes bench/results_baseline.json
 ```
 
-| Measurement | Ours | Last-10-command baseline |
-|---|---|---|
-| Applicable assertions passed / evaluated | VERIFY — not run | VERIFY — not run |
-| Median / p95 latency | VERIFY — not run | VERIFY — not run |
-| Model calls / timeouts / rejected replies | VERIFY — not run | VERIFY — not run |
-| Guard pass count / total | VERIFY — not integrated | VERIFY — applicability |
+The playbooks are in `bench/playbooks.py`, the consistency checks in
+`bench/checkers.py`; raw traces of every command are kept in the results JSON.
 
-Use five long-context playbooks and six meaningful checkers, identical model/
-decoding settings, raw traces and actual hardware metadata. An empty or irrelevant
-trace must not score 100%. Planned model is Qwen2.5 1.5B; tag/digest, quantization,
-settings and warm-up policy remain VERIFY. Aayush's benchmark laptop is reported
-as 12 GB RAM, CPU-only; final metadata is VERIFY. Development here used macOS
-26.2, Apple M4, 24 GB RAM. Unit tests are not live-model benchmark results.
+## Demo
+A 3-minute walkthrough script is in [docs/DEMO.md](docs/DEMO.md). Video: _TBD link_.
+
+## Honest limits
+- **Lab decoy only.** Loopback (`127.0.0.1`) by design; not hardened for the internet.
+- **Small code coverage.** 14 commands are answered by code; everything else,
+  including any line with `|`, `;`, `&&` or `$(...)`, goes whole to a 1.5B model
+  that can contradict itself.
+- **No permission model.** The visitor can write anywhere in the fake filesystem
+  (for example `/etc`), which a careful attacker could notice.
+- **Model writes are not path-restricted.** A model reply can overwrite or delete
+  fake files, including the canary files.
+- **Basic injection guard** with a small test set (`tests/test_guard.py`); not a
+  complete defence.
+- **ATT&CK tags are rule-based** on command names and selected arguments; they
+  label attempts, not proven success.
+- **Canaries live in memory** for one running process. Each SSH session gets its
+  own planted `.env` and `~/.aws/credentials` (PR #10); checking for reuse at SSH
+  login is **not wired** in this release, so reuse is detected only by calling
+  `registry.check()`.
+- **Benchmark scope.** One run per mode, one machine, our own playbooks and
+  checks; no variance estimate.
+- **"Local and free" is not unique.** Cowrie's LLM backend and LLMHoney also
+  support Ollama.
 
 Sixteen command IDs/names were verified against [Enterprise ATT&CK v20.0](https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack-20.0.json).
 Rules inspect command position and selected arguments, not aliases or expansions;
@@ -132,9 +171,5 @@ See [LICENSE_AUDIT.md](LICENSE_AUDIT.md) and `docs/decisions/0001-dependencies.m
 for actual installed package versions and licence evidence. Exact benchmark-host
 versions, model digest and binary bundled notices remain VERIFY. No GPL project
 source is copied; retain required notices when distributing dependencies/weights.
-
-Freeze **14:30 IST**, submit **15:05 IST**, October 16, 2026. Before release:
-wire canaries into SSH, integrate model/guard, align host facts, rerun tests and
-replace benchmark placeholders with measured results. Optional web waits until
-preceding work is merged and green. Preserve state, evidence, safety, logging/
-report, LICENSE and README when cutting scope.
+MITRE ATT&CK® technique IDs and names are used for labelling only; this project is
+not endorsed by MITRE.
