@@ -10,6 +10,7 @@ import os
 import uuid
 from typing import Dict, Optional, Tuple
 import asyncssh
+from canarynet.canary import registry
 from canarynet.router import router
 from canarynet.state.session import Session
 
@@ -77,6 +78,7 @@ def make_process_factory(logins: Dict[str, str], banner: str = DEFAULT_BANNER):
         username = process.get_extra_info("username") or "admin"
         session_id = f"ssh-{uuid.uuid4().hex[:8]}"
         session = Session(session_id=session_id, user=username, src=src_ip)
+        registry.plant(session)  # fake per-session .env and ~/.aws/credentials canaries
 
         command = process.command
         if command:

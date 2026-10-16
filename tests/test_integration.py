@@ -67,6 +67,43 @@ def test_ssh_exec_roundtrip(monkeypatch):
     assert missing == "bash: frobnicate: command not found\n"
 
 
+@pytest.mark.skipif(_missing("canarynet.fronts.ssh") or _missing("canarynet.router.handlers"),
+                    reason="ssh.py or handlers.py not merged yet")
+def test_ssh_session_has_planted_canaries(monkeypatch):
+    """Every SSH session gets its own fake .env; reusing its password is detected."""
+    asyncssh = pytest.importorskip("asyncssh")
+    from canarynet.canary import registry
+    from canarynet.fronts import ssh
+
+    monkeypatch.setattr(router, "ask_model", lambda s, line: None)
+    monkeypatch.setattr(router, "log_event", lambda *a: None)
+    registry._reset()
+
+    async def go():
+        key = asyncssh.generate_private_key("ssh-ed25519")
+        listener = await ssh.create_ssh_server(port=0, host_key=key)
+        try:
+            async with asyncssh.connect("127.0.0.1", port=listener.get_port(), username="admin",
+                                        password="admin", known_hosts=None) as conn:
+                first = await conn.run("cat /var/www/html/.env")    # one session per exec
+                second = await conn.run("cat /var/www/html/.env")
+                aws = await conn.run("cat ~/.aws/credentials")
+        finally:
+            listener.close()
+        return first.stdout, second.stdout, aws.stdout
+
+    try:
+        first, second, aws = asyncio.run(go())
+        pw1 = first.split("DB_PASSWORD=")[1].strip()
+        pw2 = second.split("DB_PASSWORD=")[1].strip()
+        assert pw1 and pw1 != pw2                      # unique per session
+        assert "aws_secret_access_key = " in aws
+        hit = registry.check("root", pw1, "10.0.0.9")
+        assert hit["kind"] == "env_db" and hit["planted_src"] == "127.0.0.1"
+    finally:
+        registry._reset()
+
+
 @pytest.mark.skipif(_missing("canarynet.fronts.ssh"), reason="ssh.py not merged yet")
 def test_ssh_refuses_non_loopback():
     from canarynet.fronts import ssh
