@@ -128,7 +128,7 @@ def test_dict_reply_and_bad_changes_are_skipped(t):
         {"op": "set_env", "path": "BAD NAME", "content": "x"},
         {"op": "delete_file", "path": "/home/admin/notes.txt"},
     ]}
-    assert router.run(t.s, "weird") == "ok\n"
+    assert router.run(t.s, "weird") == "ok"
     assert t.s.read_file("/home/admin/notes.txt") is None
     assert "/" in t.s.fs and "BAD NAME" not in t.s.env
 

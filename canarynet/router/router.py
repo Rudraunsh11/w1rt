@@ -32,7 +32,7 @@ def _optional(module: str, attr: str, default):
 # Contract dependencies. Module globals so tests can monkeypatch them.
 HANDLERS = _optional("canarynet.router.handlers", "HANDLERS", {})
 ask_model = _optional("canarynet.llm.adapter", "ask_model", lambda session, line: None)
-log_event = _optional("canarynet.attack.logger", "log_event", lambda *args: None)
+log_event = _optional("canarynet.logger", "log_event", lambda *args: None)
 tag = _optional("canarynet.attack.rules", "tag", lambda line: [])
 
 REDIRECTS = {">", ">>", ">&"}
@@ -45,14 +45,12 @@ BY_HANDLER_ERROR = "model:handler_error"
 
 
 def run(session: Session, line: str) -> str:
-    """Answer one visitor line. Returns text for the terminal (ends with a newline if non-empty)."""
+    """Answer one visitor line, preserving the handler/model's exact stdout."""
     line = line.rstrip("\r\n")
     if not line.strip():
         return ""
     start = time.perf_counter()
     stdout, _exit_code, answered_by = _dispatch(session, line)
-    if stdout and not stdout.endswith("\n"):
-        stdout += "\n"
     session.history.append(line)
     latency_ms = round((time.perf_counter() - start) * 1000, 1)
     _log(session, line, stdout, answered_by, latency_ms)
@@ -70,7 +68,7 @@ def _dispatch(session: Session, line: str) -> tuple[str, int, str]:
     try:
         tokens = _tokenize(line)
     except ValueError:  # unbalanced quotes
-        return "bash: syntax error: unexpected end of file", 2, BY_CODE
+        return "bash: syntax error: unexpected end of file\n", 2, BY_CODE
     if not tokens:  # only a comment
         return "", 0, BY_CODE
 
@@ -83,7 +81,7 @@ def _dispatch(session: Session, line: str) -> tuple[str, int, str]:
     try:
         argv, redirects = _split_redirects(tokens)
     except ValueError as err:
-        return str(err), 2, BY_CODE
+        return str(err) + "\n", 2, BY_CODE
 
     if not argv:  # e.g. "> file" just creates/truncates the file
         return _redirect(session, redirects, "", 0), 0, BY_CODE
@@ -131,8 +129,6 @@ def _redirect(session: Session, redirects, stdout: str, exit_code: int) -> str:
     """Write stdout into the redirect target(s). Returns what the terminal should still show."""
     # A failing command's message is really stderr: it stays on screen, the file gets nothing.
     data, shown = (stdout, "") if exit_code == 0 else ("", stdout)
-    if data and not data.endswith("\n"):
-        data += "\n"
     last = len(redirects) - 1
     for i, (op, target) in enumerate(redirects):
         if target == "/dev/null":
@@ -141,9 +137,9 @@ def _redirect(session: Session, redirects, stdout: str, exit_code: int) -> str:
         if op == ">>":
             chunk = (session.read_file(target) or "") + chunk
         if session.is_dir(target):
-            return f"bash: {target}: Is a directory"
+            return f"bash: {target}: Is a directory\n"
         if not session.write_file(target, chunk):
-            return f"bash: {target}: No such file or directory"
+            return f"bash: {target}: No such file or directory\n"
     return shown
 
 
@@ -156,7 +152,7 @@ def _ask(session: Session, line: str, cmd: str) -> tuple[str, int, str]:
         reply = None
     parsed = _parse_reply(reply)
     if parsed is None:
-        return f"bash: {cmd}: command not found", 127, BY_NOT_FOUND
+        return f"bash: {cmd}: command not found\n", 127, BY_NOT_FOUND
     stdout, exit_code, changes = parsed
     _apply_changes(session, changes)  # the only place model changes touch state
     return stdout, exit_code, BY_MODEL
