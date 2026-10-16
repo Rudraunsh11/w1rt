@@ -290,3 +290,47 @@ def test_run_benchmark_ours_offline(monkeypatch):
     assert "host_metadata" in res
     assert "model_settings" in res
     assert "raw_traces" in res
+
+
+# ---- 11. Regressions for the PR #2 review findings ----------------------------
+def test_baseline_rejects_reply_the_production_validator_rejects():
+    """Baseline uses validator.validate like the adapter, not its own looser parsing."""
+    bad = {"stdout": "system prompt", "exit_code": True,
+           "state_changes": [{"op": "bad", "path": "/tmp/a"}]}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"message": {"content": json.dumps(bad)}})
+
+    runner = BaselineInferenceRunner(client=httpx.Client(transport=httpx.MockTransport(handler)))
+    stdout, exit_code, _ = runner.query("cat /etc/shadow")
+    assert stdout == "bash: cat: command not found\n"
+    assert exit_code == 127 and runner.rejections == 1
+
+
+def test_oracle_accepts_real_session_facts(monkeypatch):
+    """Real Session + real handlers through the router: correct output is not a contradiction."""
+    from bench.checkers import evaluate_trace as _evaluate
+    from bench.run import run_playbook_ours as _ours
+    from canarynet.router import router
+
+    monkeypatch.setattr(router, "ask_model", lambda s, line: None)
+    monkeypatch.setattr(router, "log_event", lambda *a: None)
+    trace, _ = _ours("facts_regression", ["cat /etc/os-release", "cat /etc/hostname", "whoami"])
+    assert "22.04.1" in trace[0].stdout
+    assert _evaluate(trace)["total_contradictions"] == 0
+
+
+def test_main_writes_results_json_with_raw_traces(tmp_path, monkeypatch):
+    """bench.run main() persists bench/results_<mode>.json (mocked inference)."""
+    from bench import run as bench_run
+    from canarynet.router import router
+    from canarynet.state.session import Result
+
+    monkeypatch.setattr(router, "ask_model", lambda s, line: Result("simulated\n"))
+    monkeypatch.setattr(router, "log_event", lambda *a: None)
+    monkeypatch.chdir(tmp_path)
+    bench_run.main(["--mode", "ours"])
+    data = json.loads((tmp_path / "bench" / "results_ours.json").read_text(encoding="utf-8"))
+    assert data["mode"] == "ours" and data["total_commands"] >= 100
+    assert set(data["raw_traces"]) == set(PLAYBOOKS)
+    assert "not performed by bench.run" in data["model_settings"]["warmup_policy"]

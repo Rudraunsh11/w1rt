@@ -81,10 +81,10 @@ class POSIXExpectedStateOracle:
                 "admin:x:1000:\n"
             ),
             "/etc/os-release": (
-                'PRETTY_NAME="Ubuntu 22.04.4 LTS"\n'
+                'PRETTY_NAME="Ubuntu 22.04.1 LTS"\n'
                 'NAME="Ubuntu"\n'
                 'VERSION_ID="22.04"\n'
-                'VERSION="22.04.4 LTS (Jammy Jellyfish)"\n'
+                'VERSION="22.04.1 LTS (Jammy Jellyfish)"\n'
                 'VERSION_CODENAME=jammy\n'
                 'ID=ubuntu\n'
                 'ID_LIKE=debian\n'

@@ -23,7 +23,7 @@ import httpx
 
 from bench.checkers import TraceStep, evaluate_trace
 from bench.playbooks import PLAYBOOKS
-from canarynet.llm import guard
+from canarynet.llm import guard, validator
 from canarynet.llm.adapter import DEFAULT_MODEL, OLLAMA_CHAT_URL, SCHEMA, SYSTEM_PERSONA
 from canarynet.router import router
 from canarynet.state.session import Session
@@ -34,7 +34,7 @@ MODEL_SETTINGS = {
     "seed": 42,
     "num_predict": 512,
     "format": "json_schema",
-    "warmup_policy": "Single warmup prompt before measurement",
+    "warmup_policy": "manual: run `ollama run qwen2.5:1.5b \"say ok\"` before measuring (not performed by bench.run)",
 }
 
 
@@ -181,11 +181,13 @@ class BaselineInferenceRunner:
                 raw_content = data.get("message", {}).get("content", "")
                 try:
                     parsed = json.loads(raw_content)
-                    if isinstance(parsed, dict) and "stdout" in parsed:
-                        stdout = str(parsed["stdout"])
+                    # Same rejection policy as production: adapter.ask_model -> validator.validate
+                    checked = validator.validate(parsed, None)
+                    if checked is not None:
+                        stdout = checked.stdout
                         if stdout and not stdout.endswith("\n"):
-                            stdout += "\n"
-                        exit_code = int(parsed.get("exit_code", 0))
+                            stdout += "\n"  # same as router._ask for model replies
+                        exit_code = checked.exit_code
                     else:
                         self.rejections += 1
                         cmd_name = cmd.split()[0] if cmd.split() else "cmd"
@@ -390,7 +392,15 @@ def print_markdown_table(res: Dict[str, Any]) -> None:
     print()
 
 
-def main():
+def write_results(results: Dict[str, Any], path: str) -> str:
+    """Persist the full result (metrics, settings, host metadata, raw traces) as JSON."""
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2, ensure_ascii=False)
+    return path
+
+
+def main(argv: Optional[List[str]] = None):
     parser = argparse.ArgumentParser(description="CanaryNet consistency benchmark")
     parser.add_argument(
         "--mode",
@@ -398,9 +408,12 @@ def main():
         default="ours",
         help="Benchmark mode: 'ours' (state-backed) or 'baseline' (last-10-command baseline)",
     )
-    args = parser.parse_args()
+    parser.add_argument("--out", default=None, help="JSON output path (default bench/results_<mode>.json)")
+    args = parser.parse_args(argv)
     results = run_benchmark(mode=args.mode)
     print_markdown_table(results)
+    path = write_results(results, args.out or os.path.join("bench", f"results_{args.mode}.json"))
+    print(f"Wrote {path}")
 
 
 if __name__ == "__main__":
