@@ -11,7 +11,7 @@ try with MITRE ATT&CK tags.
 > **Integration status (update at submit):** state, router, 14 code handlers, SSH
 > front, model adapter with validator and guard, canary planting in SSH sessions,
 > JSONL logging, the HTML report and the benchmark runner are all on `main`.
-> Benchmark: **not run yet**. Demo video: **not recorded yet**.
+> Benchmark: **not run yet**. There is no demo video in this submission.
 
 ## Safety
 Loopback only (`127.0.0.1`), visitor input is never executed, no real credentials.
@@ -115,7 +115,8 @@ The playbooks are in `bench/playbooks.py`, the consistency checks in
 `bench/checkers.py`; raw traces of every command are kept in the results JSON.
 
 ## Demo
-A 3-minute walkthrough script is in [docs/DEMO.md](docs/DEMO.md). Video: _TBD link_.
+There is no demo video. [docs/DEMO.md](docs/DEMO.md) is a 3-minute live walkthrough
+script you can follow yourself; it is not a record of a completed run.
 
 ## Honest limits
 - **Lab decoy only.** Loopback (`127.0.0.1`) by design; not hardened for the internet.

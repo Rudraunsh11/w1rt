@@ -1,19 +1,18 @@
-# Demo script (3 minutes)
+# Live walkthrough script (3 minutes)
 
 This is the script to follow, **not a record of a completed run**. It needs PR #2
 (SSH front, model adapter) and PR #10 (canaries in SSH sessions) merged on `main`.
 Step 1:55 (canary login) is cut in this release; skip it.
 
-Setup before recording:
+Setup before the walkthrough:
 - Ollama running on `127.0.0.1:11434` with `qwen2.5:1.5b`; send one warm-up prompt
   (`ollama run qwen2.5:1.5b "say ok"`) so the first model answer is not a cold start.
 - `git pull` on `main`, `python -m pytest -q` green.
 - Windows Terminal, two panes, large font. Close notifications.
 - Left pane: `python -m canarynet --port 2222`. It must print **no** stand-in warning.
 - Right pane: ready to type `ssh -p 2222 admin@127.0.0.1` (password `admin`).
-- Record the window: Win+Alt+R (Xbox Game Bar) or OBS. Stop with the same keys.
 
-Rules while recording: one command per line; no `|`, `;` or `&&` (those go to the
+Rules during the walkthrough: one command per line; no `|`, `;` or `&&` (those go to the
 model as a whole line); if the model is slow, keep talking, do not retype.
 
 | Time | Type | Say |
@@ -29,5 +28,4 @@ model as a whole line); if the model is slow, keep talking, do not retype.
 | 2:30 | README results table | "We measured multi-step consistency against a baseline that only remembers the last 10 commands, same model. Here are the numbers." (read pass rate and contradictions per 100 for both) |
 | 2:50 | README "Honest limits" | "Limits: lab only, 14 commands in code, a basic injection guard, and local-and-free is not unique. Thank you." |
 
-If something breaks during recording: stop, fix, and record again from the start.
-Do not edit the video to hide a failure.
+If something breaks, say so and show the failure; do not hide it.
