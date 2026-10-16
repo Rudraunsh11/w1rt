@@ -11,7 +11,7 @@ try with MITRE ATT&CK tags.
 > **Integration status (update at submit):** state, router, 14 code handlers, SSH
 > front, model adapter with validator and guard, canary planting in SSH sessions,
 > JSONL logging, the HTML report and the benchmark runner are all on `main`.
-> Benchmark: **not run yet**. Demo video: **not recorded yet**.
+> Benchmark: **not run yet**. Judges' demo: **live showcase; no recording planned**.
 
 ## Safety
 Loopback only (`127.0.0.1`), visitor input is never executed, no real credentials.
@@ -77,10 +77,10 @@ concurrent writers; I/O failures propagate. Rotation, tamper-proofing and networ
 filesystem guarantees are outside this MVP.
 
 Persona: admin, uid/gid 1000, groups admin/sudo, `/home/admin`, `web-prod-01`.
-The requested uname text remains `Linux web-prod-01 5.15.0-91-generic #101-Ubuntu
-SMP x86_64 GNU/Linux`. Its real Ubuntu build correspondence is VERIFY. Snehank's
-KERNEL constant is currently `5.15.0-58-generic`; align it and the SSH banner before
-claiming every host fact agrees. File dates/permissions and ps entries are synthetic.
+`uname -a` and `uname -r` use the shared Session `KERNEL` constant,
+`5.15.0-58-generic`, matching the SSH banner. The full uname text is synthetic;
+its real Ubuntu build correspondence remains VERIFY. File dates/permissions and
+ps entries are synthetic.
 
 ## Results
 Multi-step consistency benchmark: CanaryNet Lite (code-owned state, model only for
@@ -115,7 +115,9 @@ The playbooks are in `bench/playbooks.py`, the consistency checks in
 `bench/checkers.py`; raw traces of every command are kept in the results JSON.
 
 ## Demo
-A 3-minute walkthrough script is in [docs/DEMO.md](docs/DEMO.md). Video: _TBD link_.
+A 3-minute walkthrough script is in [docs/DEMO.md](docs/DEMO.md). The judges will
+see a live showcase; skip the script's recording instructions and the cut canary
+login step. No recorded video or completed benchmark is claimed.
 
 ## Honest limits
 - **Lab decoy only.** Loopback (`127.0.0.1`) by design; not hardened for the internet.
