@@ -154,6 +154,10 @@ def _ask(session: Session, line: str, cmd: str) -> tuple[str, int, str]:
     if parsed is None:
         return f"bash: {cmd}: command not found\n", 127, BY_NOT_FOUND
     stdout, exit_code, changes = parsed
+    # Small models often drop the final newline; without it the SSH prompt is glued
+    # to the output. Handler bytes are preserved exactly; only model text is fixed.
+    if stdout and not stdout.endswith("\n"):
+        stdout += "\n"
     _apply_changes(session, changes)  # the only place model changes touch state
     return stdout, exit_code, BY_MODEL
 
