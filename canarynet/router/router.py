@@ -44,16 +44,34 @@ BY_CODE, BY_MODEL, BY_NOT_FOUND = "code", "model", "not_found"
 BY_HANDLER_ERROR = "model:handler_error"
 
 
+# Private observation hook for benchmark runner to record dispatch results without guessing from text
+_observer_hook = None
+
+
+def set_observer_hook(hook):
+    """Register an observation hook: hook(session, line, stdout, exit_code, answered_by, latency_ms).
+    
+    Preserves the public run(session, line) -> str signature while exposing true exit code and dispatch origin.
+    """
+    global _observer_hook
+    _observer_hook = hook
+
+
 def run(session: Session, line: str) -> str:
     """Answer one visitor line, preserving the handler/model's exact stdout."""
     line = line.rstrip("\r\n")
     if not line.strip():
         return ""
     start = time.perf_counter()
-    stdout, _exit_code, answered_by = _dispatch(session, line)
+    stdout, exit_code, answered_by = _dispatch(session, line)
     session.history.append(line)
     latency_ms = round((time.perf_counter() - start) * 1000, 1)
     _log(session, line, stdout, answered_by, latency_ms)
+    if _observer_hook is not None:
+        try:
+            _observer_hook(session, line, stdout, exit_code, answered_by, latency_ms)
+        except Exception:
+            pass
     return stdout
 
 

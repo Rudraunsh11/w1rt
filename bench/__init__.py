@@ -1,0 +1,1 @@
+"""CanaryNet consistency benchmark suite."""
