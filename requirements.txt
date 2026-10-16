@@ -1,2 +1,4 @@
 # Licence of each dependency is recorded in docs/decisions/0001-dependencies.md
-pytest>=8  # MIT
+pytest>=8          # MIT
+httpx>=0.28        # BSD-3-Clause (loopback Ollama client)
+asyncssh>=2.14     # EPL-2.0 OR GPL-2.0-or-later; used under EPL-2.0 as a dependency
