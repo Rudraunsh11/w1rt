@@ -8,10 +8,9 @@ try with MITRE ATT&CK tags.
 - Only unknown commands go to a small local model (Ollama, Qwen2.5 1.5B).
 - Every model reply is validated before the state changes.
 
-> **Integration status (update at submit):** state, router, 14 code handlers, canary
-> registry, JSONL logging and the HTML report are on `main`. The SSH front, the model
-> adapter and the benchmark runner arrive with PR #2, and canary planting in SSH
-> sessions with PR #10; until both are merged `python -m canarynet` cannot start.
+> **Integration status (update at submit):** state, router, 14 code handlers, SSH
+> front, model adapter with validator and guard, canary planting in SSH sessions,
+> JSONL logging, the HTML report and the benchmark runner are all on `main`.
 > Benchmark: **not run yet**. Demo video: **not recorded yet**.
 
 ## Safety
