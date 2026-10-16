@@ -119,6 +119,15 @@ A 3-minute walkthrough script is in [docs/DEMO.md](docs/DEMO.md). The judges wil
 see a live showcase; skip the script's recording instructions and the cut canary
 login step. No recorded video or completed benchmark is claimed.
 
+**Local rehearsal report.** Below is the real HTML report (`python -m canarynet.report`)
+from one local loopback SSH session against `main` at `ad838b6`, started with
+`python -m canarynet --port 2222`. The visitor was synthetic (a scripted SSH
+client typing 7 commands); all 7 were answered by code, no model was called. The
+`DB_PASSWORD` shown is a fake per-session canary. This is a rehearsal, not a
+recorded judges' demo and not a benchmark result.
+
+![Local loopback rehearsal report](docs/report.png)
+
 ## Honest limits
 - **Lab decoy only.** Loopback (`127.0.0.1`) by design; not hardened for the internet.
 - **Small code coverage.** 14 commands are answered by code; everything else,
