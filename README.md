@@ -184,3 +184,45 @@ versions, model digest and binary bundled notices remain VERIFY. No GPL project
 source is copied; retain required notices when distributing dependencies/weights.
 MITRE ATT&CK® technique IDs and names are used for labelling only; this project is
 not endorsed by MITRE.
+
+## Next version: local web decoy
+
+This feature branch adds a realistic fake operations login, independently of the
+submitted SSH build. Start it from the repo root:
+
+```sh
+python -m canarynet.fronts.web
+```
+
+Open `http://127.0.0.1:8080` and use the synthetic account `admin` / `admin` for the
+pretend dashboard. The visitor page, dashboard and configuration are simulated;
+do not enter real credentials. There is no model call and no outbound request.
+The same-origin referrer policy preserves the Origin on ordinary browser form
+posts. Submissions with an opaque (`null`) Origin are deliberately rejected.
+
+To demonstrate a canary: in browser A, open `/robots.txt`, discover `/backups/`,
+and read `/backups/app.env`. It contains a unique fake `DB_PASSWORD`. In a separate
+browser profile/private window B, submit that value to the login form. It remains
+a failed login, while `logs/events.jsonl` records `canary_reuse`, the canary ID,
+and the original planting session. Run `python -m canarynet.report` to see it.
+The attempted username, submitted password and CSRF token are never put in logs.
+Ordinary wrong passwords produce `login_failed`, without a canary match.
+
+`serve(host="127.0.0.1", port=8080)` keeps the original contract. All assets are
+inline; form requests are bounded, CSRF-checked and restricted to the local Host.
+Visitor cookies are random IDs with HttpOnly and SameSite=Strict, and are rotated
+on sign-in/sign-out. They are deliberately not Secure cookies on this HTTP-only
+loopback demo. Real HTTPS deployment is outside this branch's scope.
+
+The web front uses Python's standard library only (covered by the Python licence
+in LICENSE_AUDIT.md): `http.server` serves the controlled local demo, `http.cookies`
+reads browser IDs, `secrets` creates random markers, `hmac` compares tokens, and
+`html` escapes display values. No third-party package was added. The built-in HTTP
+server is a lab component, not a production web server.
+
+Visitor state and the existing canary registry remain in memory. Refreshes keep a
+browser's fake file stable; different browsers receive different values. Restarting
+the process forgets all canaries; starting SSH and web as separate processes does
+not share their registries. Cross-front tracking requires the same Python process
+or a later shared-storage ticket owned by the state/canary maintainer. This branch
+does not change the SSH authentication path or connect to a genuine login system.
