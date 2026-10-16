@@ -172,3 +172,115 @@ def hostname(session, argv):
         return _result("hostname: setting hostname is not supported\n", 1)
     return _result(session.env.get("HOSTNAME", "web-prod-01") + "\n")
 
+
+@command("echo")
+def echo(session, argv):
+    """Print text only; redirection and shell expansion belong to the router."""
+    args = list(argv)
+    newline = True
+    if args and args[0] == "-n":
+        newline = False
+        args.pop(0)
+    return _result(" ".join(args) + ("\n" if newline else ""))
+
+
+@command("mkdir")
+def mkdir(session, argv):
+    try:
+        flags, paths = _options(argv, {"p"})
+    except ValueError:
+        return _result("mkdir: unsupported option\n", 1)
+    if not paths:
+        return _result("mkdir: missing operand\n", 1)
+    errors = []
+    for operand in paths:
+        path = session.resolve(operand)
+        targets = [path]
+        if "p" in flags:
+            targets = []
+            current = "/"
+            for part in path.strip("/").split("/"):
+                if part:
+                    current = posixpath.join(current, part)
+                    targets.append(current)
+        for target in targets:
+            kind = _kind(session, target)
+            if kind == "dir" and "p" in flags:
+                continue
+            if kind is not None:
+                errors.append(f"mkdir: cannot create directory '{operand}': File exists\n")
+                break
+            parent = _kind(session, posixpath.dirname(target))
+            if parent != "dir":
+                reason = "Not a directory" if parent == "file" else "No such file or directory"
+                errors.append(f"mkdir: cannot create directory '{operand}': {reason}\n")
+                break
+            if not session.mkdir(target):
+                errors.append(f"mkdir: cannot create directory '{operand}'\n")
+                break
+    return _result("".join(errors), int(bool(errors)))
+
+
+@command("touch")
+def touch(session, argv):
+    if not argv:
+        return _result("touch: missing file operand\n", 1)
+    errors = []
+    for operand in argv:
+        path = session.resolve(operand)
+        if _kind(session, path) is not None:
+            continue  # The virtual contract has no timestamps; preserve contents.
+        parent = _kind(session, posixpath.dirname(path))
+        if parent != "dir":
+            reason = "Not a directory" if parent == "file" else "No such file or directory"
+            errors.append(f"touch: cannot touch '{operand}': {reason}\n")
+        else:
+            session.write_file(path, "")
+    return _result("".join(errors), int(bool(errors)))
+
+
+@command("rm")
+def rm(session, argv):
+    try:
+        flags, paths = _options(argv, {"f"})
+    except ValueError:
+        return _result("rm: recursive deletion and this option are not supported\n", 1)
+    if not paths:
+        return _result() if "f" in flags else _result("rm: missing operand\n", 1)
+    errors = []
+    for operand in paths:
+        path = session.resolve(operand)
+        kind = _kind(session, path)
+        if kind == "dir":
+            errors.append(f"rm: cannot remove '{operand}': Is a directory\n")
+        elif kind is None:
+            if "f" not in flags:
+                errors.append(f"rm: cannot remove '{operand}': No such file or directory\n")
+        elif not session.delete(path):
+            errors.append(f"rm: cannot remove '{operand}'\n")
+    return _result("".join(errors), int(bool(errors)))
+
+
+@command("ps")
+def ps(session, argv):
+    if argv and argv not in [["aux"], ["-aux"], ["-ef"], ["-e"], ["-f"]]:
+        return _result("ps: unsupported option\n", 1)
+    return _result(
+        "  PID TTY          TIME CMD\n"
+        "    1 ?        00:00:01 systemd\n"
+        "  421 ?        00:00:00 sshd\n"
+        "  812 pts/0    00:00:00 bash\n"
+        "  840 pts/0    00:00:00 ps\n"
+    )
+
+
+@command("history")
+def history(session, argv):
+    entries = list(enumerate(session.history, start=1))
+    if argv:
+        if len(argv) != 1 or not argv[0].isascii() or not argv[0].isdigit():
+            return _result("history: only an optional nonnegative count is supported\n", 1)
+        count = int(argv[0])
+        entries = entries[-count:] if count else []
+    return _result("".join(f"{number:5}  {line}\n" for number, line in entries))
+
