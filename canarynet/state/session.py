@@ -44,6 +44,11 @@ class Session:
                 "/": {"type": "dir", "content": ""},
                 "/home": {"type": "dir", "content": ""},
                 f"/home/{user}": {"type": "dir", "content": ""},
+                "/tmp": {"type": "dir", "content": ""},
+                "/var": {"type": "dir", "content": ""},
+                "/etc": {"type": "dir", "content": ""},
+                "/usr": {"type": "dir", "content": ""},
+                "/bin": {"type": "dir", "content": ""},
             }
 
     def resolve(self, path: str) -> str:
