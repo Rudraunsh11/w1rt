@@ -33,7 +33,6 @@ grep only shows `127.0.0.1` addresses; the last two print nothing.
 ## 5. Release
 - [ ] Tag the release on main, for example `git tag -a v1.0 -m "Hackathon submission"` then `git push origin v1.0`.
 - [ ] Repository is public; LICENSE (Apache-2.0) and LICENSE_AUDIT.md present.
-- [ ] Demo video uploaded (unlisted) and linked at the top of the README.
 
 ## 6. Submit (by 15:05)
-- [ ] Repo URL, video URL, short description, team names in the submission form.
+- [ ] Repo URL, short description, team names in the submission form (no demo video).
