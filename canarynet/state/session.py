@@ -8,7 +8,8 @@ import posixpath
 from dataclasses import dataclass, field
 
 HOSTNAME = "web-prod-01"
-OS_PRETTY = "Ubuntu 22.04.4 LTS"
+OS_PRETTY = "Ubuntu 22.04.1 LTS"  # must match the SSH banner
+KERNEL = "5.15.0-58-generic"     # must match the SSH banner and uname
 
 _PASSWD = """root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
@@ -30,10 +31,10 @@ www-data:x:33:
 admin:x:1000:
 """
 
-_OS_RELEASE = """PRETTY_NAME="Ubuntu 22.04.4 LTS"
+_OS_RELEASE = """PRETTY_NAME="Ubuntu 22.04.1 LTS"
 NAME="Ubuntu"
 VERSION_ID="22.04"
-VERSION="22.04.4 LTS (Jammy Jellyfish)"
+VERSION="22.04.1 LTS (Jammy Jellyfish)"
 VERSION_CODENAME=jammy
 ID=ubuntu
 ID_LIKE=debian
