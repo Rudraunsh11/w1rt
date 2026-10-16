@@ -78,7 +78,7 @@ def ask_model(
         f"Current Session State:\n"
         f"- CWD: {snapshot.get('cwd')}\n"
         f"- User: {snapshot.get('user')}\n"
-        f"- Recent Files: {list(snapshot.get('files', []))[:20]}\n\n"
+        f"- Recent Files: {list(snapshot.get('cwd_listing') or snapshot.get('files', []))[:20]}\n\n"
         f"Visitor Input:\n{wrapped_input}"
     )
 

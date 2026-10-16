@@ -1,0 +1,862 @@
+{
+  "mode": "ours",
+  "mode_description": "CanaryNet Lite (code-owned state)",
+  "total_commands": 112,
+  "pass_rate_pct": 100.0,
+  "contradictions_per_100": 0.0,
+  "share_answered_by_code": 97.3,
+  "median_latency_ms": 0.1,
+  "model_settings": {
+    "model": "qwen2.5:1.5b",
+    "temperature": 0.0,
+    "seed": 42,
+    "num_predict": 512,
+    "format": "json_schema",
+    "warmup_policy": "Single warmup prompt before measurement"
+  },
+  "host_metadata": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel",
+    "python_version": "3.14.6",
+    "system": "Windows",
+    "release": "11"
+  },
+  "playbooks": {
+    "playbook_1_recon": {
+      "commands": 22,
+      "pass_rate_pct": 100.0,
+      "contradictions": 0,
+      "applicable_checkers": 5,
+      "passed_checkers": 5,
+      "status": "PASS"
+    },
+    "playbook_2_file_lifecycle": {
+      "commands": 24,
+      "pass_rate_pct": 100.0,
+      "contradictions": 0,
+      "applicable_checkers": 4,
+      "passed_checkers": 4,
+      "status": "PASS"
+    },
+    "playbook_3_same_basename": {
+      "commands": 22,
+      "pass_rate_pct": 100.0,
+      "contradictions": 0,
+      "applicable_checkers": 5,
+      "passed_checkers": 5,
+      "status": "PASS"
+    },
+    "playbook_4_nested_navigation": {
+      "commands": 22,
+      "pass_rate_pct": 100.0,
+      "contradictions": 0,
+      "applicable_checkers": 4,
+      "passed_checkers": 4,
+      "status": "PASS"
+    },
+    "playbook_5_exact_byte_size": {
+      "commands": 22,
+      "pass_rate_pct": 100.0,
+      "contradictions": 0,
+      "applicable_checkers": 5,
+      "passed_checkers": 5,
+      "status": "PASS"
+    }
+  },
+  "raw_traces": {
+    "playbook_1_recon": [
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "uname -a",
+        "stdout": "Linux web-prod-01 5.15.0-101-generic #111-Ubuntu SMP x86_64 GNU/Linux\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/os-release",
+        "stdout": "PRETTY_NAME=\"Ubuntu 22.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.4 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nUBUNTU_CODENAME=jammy\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/passwd",
+        "stdout": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin\nsys:x:3:3:sys:/dev:/usr/sbin/nologin\nsync:x:4:65534:sync:/bin:/bin/sync\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin\nbackup:x:34:34:backup:/var/backups:/usr/sbin/nologin\nnobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin\nsystemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin\nsyslog:x:104:110::/home/syslog:/usr/sbin/nologin\nsshd:x:110:65534::/run/sshd:/usr/sbin/nologin\nadmin:x:1000:1000:Admin,,,:/home/admin:/bin/bash\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "uptime",
+        "stdout": "system uptime\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /etc",
+        "stdout": "group  hostname  os-release  passwd\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l /etc/passwd",
+        "stdout": "-rw-r--r-- 1 admin admin 585 Oct 16 12:00 passwd\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/group",
+        "stdout": "root:x:0:\nsudo:x:27:admin\nwww-data:x:33:\nadmin:x:1000:\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "uname -m",
+        "stdout": "Linux\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /home/admin",
+        "stdout": ".bashrc  .profile  backup.sh  notes.txt  projects\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /home/admin/.bashrc",
+        "stdout": "# ~/.bashrc: executed by bash(1) for non-login shells.\ncase $- in *i*) ;; *) return;; esac\nHISTCONTROL=ignoreboth\nalias ll='ls -alF'\nalias la='ls -A'\nPS1='\\u@\\h:\\w\\$ '\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      }
+    ],
+    "playbook_2_file_lifecycle": [
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "echo 'canary_token_99182' > token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "mkdir /tmp/sandbox",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cd /tmp/sandbox",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp/sandbox\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd ..",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /tmp",
+        "stdout": "sandbox  token.txt\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cat token.txt",
+        "stdout": "canary_token_99182\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'appended_payload' >> token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cat token.txt",
+        "stdout": "canary_token_99182\nappended_payload\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "rm token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "ls token.txt",
+        "stdout": "ls: cannot access 'token.txt': No such file or directory\n",
+        "exit_code": 2,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'reborn_token' > token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cat token.txt",
+        "stdout": "reborn_token\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      }
+    ],
+    "playbook_3_same_basename": [
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "echo 'tmp_config_alpha' > config.json",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "echo 'home_config_beta' > config.json",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/os-release",
+        "stdout": "PRETTY_NAME=\"Ubuntu 22.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.4 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nUBUNTU_CODENAME=jammy\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /etc",
+        "stdout": "group  hostname  os-release  passwd\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "uptime",
+        "stdout": "system uptime\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /tmp/config.json",
+        "stdout": "tmp_config_alpha\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /home/admin/config.json",
+        "stdout": "home_config_beta\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "rm /tmp/config.json",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cat /home/admin/config.json",
+        "stdout": "home_config_beta\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /tmp/config.json",
+        "stdout": "ls: cannot access '/tmp/config.json': No such file or directory\n",
+        "exit_code": 2,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      }
+    ],
+    "playbook_4_nested_navigation": [
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "mkdir workdir",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cd workdir",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "mkdir subrepo",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cd subrepo",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir/subrepo\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'deeply_nested_module' > module.py",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cat module.py",
+        "stdout": "deeply_nested_module\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd ..",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat subrepo/module.py",
+        "stdout": "deeply_nested_module\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls subrepo",
+        "stdout": "module.py\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd ..",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat workdir/subrepo/module.py",
+        "stdout": "deeply_nested_module\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls workdir",
+        "stdout": "subrepo\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      }
+    ],
+    "playbook_5_exact_byte_size": [
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "echo 'data_block_48_bytes_total_length_verification_ok' > metric.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "cat metric.txt",
+        "stdout": "data_block_48_bytes_total_length_verification_ok\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l metric.txt",
+        "stdout": "-rw-r--r-- 1 admin admin 49 Oct 16 12:00 metric.txt\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/os-release",
+        "stdout": "PRETTY_NAME=\"Ubuntu 22.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.4 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nUBUNTU_CODENAME=jammy\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "uptime",
+        "stdout": "system uptime\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /etc",
+        "stdout": "group  hostname  os-release  passwd\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /tmp/metric.txt",
+        "stdout": "data_block_48_bytes_total_length_verification_ok\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l /tmp/metric.txt",
+        "stdout": "-rw-r--r-- 1 admin admin 49 Oct 16 12:00 metric.txt\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": true
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat metric.txt",
+        "stdout": "data_block_48_bytes_total_length_verification_ok\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l metric.txt",
+        "stdout": "-rw-r--r-- 1 admin admin 49 Oct 16 12:00 metric.txt\n",
+        "exit_code": 0,
+        "answered_by": "code",
+        "state_changed": false
+      }
+    ]
+  }
+}

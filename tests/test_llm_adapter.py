@@ -73,12 +73,20 @@ def test_ask_model_timeout():
     assert result is None
 
 
+def _ollama_available() -> bool:
+    try:
+        r = httpx.get("http://127.0.0.1:11434/api/tags", timeout=0.2)
+        return r.status_code == 200
+    except Exception:
+        return False
+
+
+@pytest.mark.skipif(not _ollama_available(), reason="Local Ollama server is offline")
 def test_ask_model_live_ollama():
     """Live integration test against running local Ollama instance."""
     session = Session(session_id="test-live", user="admin")
     result = ask_model(session, "uname -s", timeout=15.0)
-    # If Ollama is running, result should be a valid Result object
-    if result is not None:
-        assert isinstance(result, Result)
-        assert result.exit_code == 0
-        assert "linux" in result.stdout.lower()
+    assert result is not None
+    assert isinstance(result, Result)
+    assert result.exit_code == 0
+    assert "linux" in result.stdout.lower()

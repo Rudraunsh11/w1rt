@@ -1,0 +1,862 @@
+{
+  "mode": "baseline",
+  "mode_description": "last-10-command baseline",
+  "total_commands": 112,
+  "pass_rate_pct": 43.5,
+  "contradictions_per_100": 33.9,
+  "share_answered_by_code": 0.0,
+  "median_latency_ms": 3738.38,
+  "model_settings": {
+    "model": "qwen2.5:1.5b",
+    "temperature": 0.0,
+    "seed": 42,
+    "num_predict": 512,
+    "format": "json_schema",
+    "warmup_policy": "Single warmup prompt before measurement"
+  },
+  "host_metadata": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel",
+    "python_version": "3.14.6",
+    "system": "Windows",
+    "release": "11"
+  },
+  "playbooks": {
+    "playbook_1_recon": {
+      "commands": 22,
+      "pass_rate_pct": 40.0,
+      "contradictions": 6,
+      "applicable_checkers": 5,
+      "passed_checkers": 2,
+      "status": "FAIL"
+    },
+    "playbook_2_file_lifecycle": {
+      "commands": 24,
+      "pass_rate_pct": 40.0,
+      "contradictions": 8,
+      "applicable_checkers": 5,
+      "passed_checkers": 2,
+      "status": "FAIL"
+    },
+    "playbook_3_same_basename": {
+      "commands": 22,
+      "pass_rate_pct": 50.0,
+      "contradictions": 7,
+      "applicable_checkers": 4,
+      "passed_checkers": 2,
+      "status": "FAIL"
+    },
+    "playbook_4_nested_navigation": {
+      "commands": 22,
+      "pass_rate_pct": 50.0,
+      "contradictions": 7,
+      "applicable_checkers": 4,
+      "passed_checkers": 2,
+      "status": "FAIL"
+    },
+    "playbook_5_exact_byte_size": {
+      "commands": 22,
+      "pass_rate_pct": 40.0,
+      "contradictions": 10,
+      "applicable_checkers": 5,
+      "passed_checkers": 2,
+      "status": "FAIL"
+    }
+  },
+  "raw_traces": {
+    "playbook_1_recon": [
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(root) gid=1000(root) groups=1000(root)\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "uname -a",
+        "stdout": "Linux web-prod-01 5.15.0-58-generic #64~22.04.1-Ubuntu SMP Fri Jun 14 14:45:17 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/os-release",
+        "stdout": "NAME=\"Ubuntu\"\nVERSION=\"22.04.1 LTS (Jammy Jellyfish)\nID=ubuntu\nID_LIKE=debian\nPRETTY_NAME=\"Ubuntu 22.04.1 LTS\"\nVERSION_ID=\"22.04\"\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nVERSION_CODENAME=jammy\nUBUNTU_CODENAME=jammy\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/passwd",
+        "stdout": "root:x:0:0:root:/root:/bin/bash\nadmin:x:1000:1000:admin:/home/admin:/bin/bash\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "uptime",
+        "stdout": "  1:14 am up 1 day, 1:14, 1 user, load average: 0.00, 0.00, 0.00\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /etc",
+        "stdout": "etc\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l /etc/passwd",
+        "stdout": "total 0\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/group",
+        "stdout": "root:x:0:\nadmin:x:1000:root\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "uname -m",
+        "stdout": "x86_64\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin)\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /home/admin",
+        "stdout": "bash\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /home/admin/.bashrc",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      }
+    ],
+    "playbook_2_file_lifecycle": [
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'canary_token_99182' > token.txt",
+        "stdout": "canary_token_99182\ntoken.txt\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin)\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "mkdir /tmp/sandbox",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /tmp/sandbox",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp/sandbox\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd ..",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /tmp",
+        "stdout": "sandbox\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat token.txt",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'appended_payload' >> token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat token.txt",
+        "stdout": "admin\nappended_payload\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "rm token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'reborn_token' > token.txt",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat token.txt",
+        "stdout": "admin\nreborn_token\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      }
+    ],
+    "playbook_3_same_basename": [
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'tmp_config_alpha' > config.json",
+        "stdout": "tmp_config_alpha\ntmp_config_alpha\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'home_config_beta' > config.json",
+        "stdout": "home_config_beta\ntmp_config_alpha\nhome_config_beta\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin)\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/os-release",
+        "stdout": "NAME=\"Ubuntu\"\nVERSION=\"22.04.1 LTS (Jammy Jellyfish)\".\nID=ubuntu\nVERSION_ID=\"22.04\"\nHOME_URL=\"https://www.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nKERNEL=\"Linux 6.1.0-25-generic\"\nVERSION_CODENAME=jammy\nUBUNTU_CODENAME=jammy\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /etc",
+        "stdout": "/etc/hostname\n/etc/hosts\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "uptime",
+        "stdout": "bash: uptime: command timed out\n",
+        "exit_code": 124,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin)\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /tmp/config.json",
+        "stdout": "[]\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /home/admin/config.json",
+        "stdout": "[]\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "rm /tmp/config.json",
+        "stdout": "rm: cannot remove '/tmp/config.json': Permission denied\n",
+        "exit_code": 1,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /home/admin/config.json",
+        "stdout": "[]\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /tmp/config.json",
+        "stdout": "ls: cannot access '/tmp/config.json': No such file or directory\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      }
+    ],
+    "playbook_4_nested_navigation": [
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "mkdir workdir",
+        "stdout": "mkdir: workdir: File exists\n",
+        "exit_code": 1,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd workdir",
+        "stdout": "workdir\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "mkdir subrepo",
+        "stdout": "mkdir: subrepo: No such file or directory\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd subrepo",
+        "stdout": "subrepo\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir/subrepo\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'deeply_nested_module' > module.py",
+        "stdout": "deeply_nested_module\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat module.py",
+        "stdout": "deeply_nested_module\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd ..",
+        "stdout": "subrepo\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat subrepo/module.py",
+        "stdout": "deeply_nested_module\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin)\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls subrepo",
+        "stdout": "module.py\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd ..",
+        "stdout": "subrepo\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat workdir/subrepo/module.py",
+        "stdout": "deeply_nested_module\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls workdir",
+        "stdout": "subrepo\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin/workdir\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      }
+    ],
+    "playbook_5_exact_byte_size": [
+      {
+        "cmd": "cd /tmp",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "echo 'data_block_48_bytes_total_length_verification_ok' > metric.txt",
+        "stdout": "data_block_48_bytes_total_length_verification_ok\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat metric.txt",
+        "stdout": "data_block_48_bytes_total_length_verification_ok\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l metric.txt",
+        "stdout": "total 0\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /home/admin",
+        "stdout": "",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "id",
+        "stdout": "uid=1000(admin) gid=1000(admin) groups=1000(admin)\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/hostname",
+        "stdout": "web-prod-01\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /etc/os-release",
+        "stdout": "NAME=\"Ubuntu\"\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "uptime",
+        "stdout": "  0:00:01 up  0:00,  1 user,  load average: 0.00, 0.00, 0.00\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls /etc",
+        "stdout": "bash: ls: command timed out\n",
+        "exit_code": 124,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "whoami",
+        "stdout": "admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/home/admin\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat /tmp/metric.txt",
+        "stdout": "1234567890\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l /tmp/metric.txt",
+        "stdout": "total 0\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cd /tmp",
+        "stdout": "bash: cd: /tmp: Permission denied\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "pwd",
+        "stdout": "/tmp\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "cat metric.txt",
+        "stdout": "1234567890\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      },
+      {
+        "cmd": "ls -l metric.txt",
+        "stdout": "total 0\n",
+        "exit_code": 0,
+        "answered_by": "model",
+        "state_changed": false
+      }
+    ]
+  }
+}

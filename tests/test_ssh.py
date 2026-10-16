@@ -17,8 +17,17 @@ async def test_ssh_safety_binding_refusal():
 
 
 @pytest.mark.asyncio
-async def test_ssh_client_login_and_whoami():
+async def test_ssh_client_login_and_whoami(monkeypatch):
     """An asyncssh client logs in to 127.0.0.1 on a test port, runs whoami, and gets an answer."""
+    from canarynet.router import router
+    from canarynet.state.session import Result
+    monkeypatch.setattr(router, "HANDLERS", {
+        "whoami": lambda s, a: Result(f"{s.user}\n"),
+        "id": lambda s, a: Result(f"uid=1000({s.user}) gid=1000({s.user})\n"),
+    })
+    monkeypatch.setattr(router, "ask_model", lambda s, l: None)
+    monkeypatch.setattr(router, "log_event", lambda *a: None)
+
     port = 22224  # Use distinct test port
     host_key = asyncssh.generate_private_key("ssh-rsa")
 
