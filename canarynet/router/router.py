@@ -13,6 +13,9 @@ import time
 from canarynet.state.session import Result, Session
 
 
+STANDINS: list[str] = []  # teammate modules not merged yet; printed at startup
+
+
 def _optional(module: str, attr: str, default):
     """Import a teammate's function; use a stand-in only while their file is not merged."""
     try:
@@ -21,6 +24,7 @@ def _optional(module: str, attr: str, default):
         if err.name != module:
             raise  # their file exists but something it imports is missing: fail loudly
         print(f"[router] {module} not merged yet, using stand-in", file=sys.stderr)
+        STANDINS.append(module)
         return default
     return getattr(mod, attr)
 
@@ -40,14 +44,14 @@ BY_CODE, BY_MODEL, BY_NOT_FOUND = "code", "model", "not_found"
 BY_HANDLER_ERROR = "model:handler_error"
 
 
-# Private observation hook for benchmark/monitoring (agreed with Snehank)
+# Private observation hook for benchmark runner to record dispatch results without guessing from text
 _observer_hook = None
 
 
 def set_observer_hook(hook):
-    """Private observation hook: hook(session, line, stdout, exit_code, answered_by, latency_ms).
+    """Register an observation hook: hook(session, line, stdout, exit_code, answered_by, latency_ms).
     
-    Preserves public run(session, line) -> str signature while capturing dispatch details.
+    Preserves the public run(session, line) -> str signature while exposing true exit code and dispatch origin.
     """
     global _observer_hook
     _observer_hook = hook

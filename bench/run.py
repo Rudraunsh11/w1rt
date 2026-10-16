@@ -14,19 +14,19 @@ import argparse
 import json
 import os
 import platform
-import posixpath
 import statistics
 import sys
 import time
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 
 from bench.checkers import TraceStep, evaluate_trace
 from bench.playbooks import PLAYBOOKS
+from canarynet.llm import guard
 from canarynet.llm.adapter import DEFAULT_MODEL, OLLAMA_CHAT_URL, SCHEMA, SYSTEM_PERSONA
 from canarynet.router import router
-from canarynet.state.session import Result, Session
+from canarynet.state.session import Session
 
 MODEL_SETTINGS = {
     "model": DEFAULT_MODEL,
@@ -49,131 +49,14 @@ def get_host_metadata() -> Dict[str, Any]:
     }
 
 
-def ensure_handlers_available() -> None:
-    """Ensures router.HANDLERS is populated.
-    
-    If Rudraunsh's canarynet.router.handlers is already merged, router.HANDLERS
-    is already non-empty and used directly. If pending merge, attaches standard
-    contract-compliant Session handlers as a stand-in so the benchmark can run.
-    """
-    if router.HANDLERS:
-        return
-
-    def _echo(s: Session, argv: list[str]) -> Result:
-        return Result(" ".join(argv) + "\n", 0)
-
-    def _pwd(s: Session, argv: list[str]) -> Result:
-        return Result(s.cwd + "\n", 0)
-
-    def _whoami(s: Session, argv: list[str]) -> Result:
-        return Result(s.user + "\n", 0)
-
-    def _hostname(s: Session, argv: list[str]) -> Result:
-        return Result(s.env.get("HOSTNAME", "web-prod-01") + "\n", 0)
-
-    def _id(s: Session, argv: list[str]) -> Result:
-        return Result(f"uid=1000({s.user}) gid=1000({s.user}) groups=1000({s.user}),27(sudo)\n", 0)
-
-    def _uname(s: Session, argv: list[str]) -> Result:
-        if "-a" in argv:
-            return Result("Linux web-prod-01 5.15.0-101-generic #111-Ubuntu SMP x86_64 GNU/Linux\n", 0)
-        return Result("Linux\n", 0)
-
-    def _cd(s: Session, argv: list[str]) -> Result:
-        target = argv[0] if argv else s.home
-        if not s.chdir(target):
-            return Result(f"bash: cd: {target}: No such file or directory\n", 1)
-        return Result("", 0)
-
-    def _mkdir(s: Session, argv: list[str]) -> Result:
-        if not argv:
-            return Result("mkdir: missing operand\n", 1)
-        for arg in argv:
-            if not s.mkdir(arg):
-                return Result(f"mkdir: cannot create directory '{arg}': File exists or parent missing\n", 1)
-        return Result("", 0)
-
-    def _cat(s: Session, argv: list[str]) -> Result:
-        if not argv:
-            return Result("", 0)
-        out = []
-        for arg in argv:
-            content = s.read_file(arg)
-            if content is None:
-                return Result(f"cat: {arg}: No such file or directory\n", 1)
-            out.append(content)
-        return Result("".join(out), 0)
-
-    def _rm(s: Session, argv: list[str]) -> Result:
-        if not argv:
-            return Result("rm: missing operand\n", 1)
-        for arg in argv:
-            if arg.startswith("-"):
-                continue
-            if not s.delete(arg):
-                return Result(f"rm: cannot remove '{arg}': No such file or directory\n", 1)
-        return Result("", 0)
-
-    def _ls(s: Session, argv: list[str]) -> Result:
-        show_all = any("a" in a for a in argv if a.startswith("-"))
-        long_fmt = any("l" in a for a in argv if a.startswith("-"))
-        paths = [a for a in argv if not a.startswith("-")]
-        target = paths[0] if paths else s.cwd
-
-        resolved = s.resolve(target)
-        if s.is_file(resolved):
-            name = posixpath.basename(resolved)
-            content = s.read_file(resolved) or ""
-            size = len(content.encode("utf-8"))
-            if long_fmt:
-                return Result(f"-rw-r--r-- 1 {s.user} {s.user} {size} Oct 16 12:00 {name}\n", 0)
-            return Result(f"{name}\n", 0)
-
-        items = s.listdir(target)
-        if items is None:
-            return Result(f"ls: cannot access '{target}': No such file or directory\n", 2)
-
-        if show_all:
-            items = [".", ".."] + items
-
-        if not long_fmt:
-            return Result("  ".join(items) + ("\n" if items else ""), 0)
-
-        lines = [f"total {len(items)}"]
-        for item in items:
-            if item in (".", ".."):
-                lines.append(f"drwxr-xr-x 2 {s.user} {s.user} 4096 Oct 16 12:00 {item}")
-                continue
-            item_path = posixpath.join(resolved, item)
-            if s.is_dir(item_path):
-                lines.append(f"drwxr-xr-x 2 {s.user} {s.user} 4096 Oct 16 12:00 {item}")
-            else:
-                c = s.read_file(item_path) or ""
-                size = len(c.encode("utf-8"))
-                lines.append(f"-rw-r--r-- 1 {s.user} {s.user} {size} Oct 16 12:00 {item}")
-        return Result("\n".join(lines) + "\n", 0)
-
-    router.HANDLERS.update({
-        "echo": _echo,
-        "pwd": _pwd,
-        "whoami": _whoami,
-        "hostname": _hostname,
-        "id": _id,
-        "uname": _uname,
-        "cd": _cd,
-        "mkdir": _mkdir,
-        "cat": _cat,
-        "rm": _rm,
-        "ls": _ls,
-    })
-
-
 def run_playbook_ours(
     playbook_name: str,
     commands: List[str],
 ) -> Tuple[List[TraceStep], List[float]]:
     """Runs a playbook under CanaryNet Lite ('ours' mode with code-owned virtual state)."""
-    ensure_handlers_available()
+    if "canarynet.router.handlers" in getattr(router, "STANDINS", []):
+        sys.exit("handlers.py not merged: 'ours' mode would not measure the product")
+
     session = Session(session_id=f"bench-{playbook_name}", user="admin")
     trace: List[TraceStep] = []
     latencies: List[float] = []
@@ -230,7 +113,7 @@ class BaselineInferenceRunner:
     - Initial message: SYSTEM_PERSONA (fixed Ubuntu 22.04 web-prod-01 persona).
     - Dialogue history: Exactly the last 10 completed (user: cmd, assistant: reply) turns.
       Turns older than 10 are evicted.
-    - Current message: user: cmd.
+    - Current message: user: guard.wrap_input(cmd) (aligned with production adapter prompt delimiters).
     - NO persistent mutable Session state is leaked into prompt (no fs, cwd, or file list).
     - Uses exact same model tag, decoding settings, and schema validation as ours.
     """
@@ -262,7 +145,7 @@ class BaselineInferenceRunner:
                 "role": "assistant",
                 "content": json.dumps({"stdout": past_out, "exit_code": 0, "state_changes": []}),
             })
-        messages.append({"role": "user", "content": cmd})
+        messages.append({"role": "user", "content": guard.wrap_input(cmd)})
 
         payload = {
             "model": self.model,
@@ -480,15 +363,6 @@ def run_benchmark(
         "playbooks": playbook_results,
         "raw_traces": raw_traces,
     }
-
-    # Save machine-readable JSON result
-    try:
-        os.makedirs("bench", exist_ok=True)
-        json_path = os.path.join("bench", f"results_{mode}.json")
-        with open(json_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=2)
-    except Exception as exc:
-        print(f"[bench] Warning: Failed to write JSON results: {exc}", file=sys.stderr)
 
     return results
 
