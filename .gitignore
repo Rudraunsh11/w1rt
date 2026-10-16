@@ -5,3 +5,10 @@ __pycache__/
 *.key
 host_key*
 logs/
+venv/
+env/
+*.log
+ssh_host_*
+*.pem
+.env
+bench/out/

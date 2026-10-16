@@ -1,0 +1,2 @@
+# Licence of each dependency is recorded in docs/decisions/0001-dependencies.md
+pytest>=8  # MIT
