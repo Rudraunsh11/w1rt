@@ -11,7 +11,7 @@ try with MITRE ATT&CK tags.
 > **Integration status (update at submit):** state, router, 14 code handlers, SSH
 > front, model adapter with validator and guard, canary planting in SSH sessions,
 > JSONL logging, the HTML report and the benchmark runner are all on `main`.
-> Benchmark: **not run yet**. Judges' demo: **live showcase; no recording planned**.
+> Benchmark: **results committed; see the table below**. Judges' demo: **live showcase; no recording planned**.
 
 ## Safety
 Loopback only (`127.0.0.1`), visitor input is never executed, no real credentials.
@@ -91,20 +91,26 @@ any other project.
 
 | Metric | CanaryNet Lite | Last-10-commands baseline |
 |---|---|---|
-| Checks passed (pass rate) | _TBD_ | _TBD_ |
-| Contradictions per 100 commands | _TBD_ | _TBD_ |
-| Share answered by code | _TBD_ | 0% by design |
-| Median latency per command | _TBD_ | _TBD_ |
-| Commands run | _TBD_ | _TBD_ |
+| Applicable checkers passed (pass rate) | 100.0% | 25.0% |
+| Contradictions per 100 commands | 0.0 | 41.1 |
+| Share answered by code | 97.3% | 0.0% |
+| Median latency per command | 0.1 ms | 2316.77 ms |
+| Commands run | 112 | 112 |
 
-Model: `qwen2.5:1.5b` via Ollama, temperature 0, seed 42. Hardware: _TBD (from
-`host_metadata` in `bench/results_*.json`)_.
+Source artifacts: [ours](bench/results_ours.json) and
+[baseline](bench/results_baseline.json), submitted in PR #15 with reported source
+commit `76776e1`. Both artifacts have matching host metadata and model settings:
+Windows 11, Intel64 Family 6 Model 140 Stepping 2 (GenuineIntel), Python 3.14.6;
+`qwen2.5:1.5b`, temperature 0, seed 42, num_predict 512, JSON schema format.
 
-**Planned procedure (not yet run):** both modes once each, on the same machine,
-from the same commit; record that commit hash here (_TBD_). Warm-up is manual
-(`ollama run qwen2.5:1.5b "say ok"`); `bench.run` does not warm up.
+Consistency metrics were recalculated from all five raw playbook traces in each
+artifact. Pass rate counts applicable checkers, not individual commands. Latency
+values are reported medians; the traces omit per-command timings, so those medians
+cannot be independently recalculated. The JSON does not embed the source commit;
+`76776e1` is the contributor's reported commit. One run per mode is reported, with
+no variance estimate. Warm-up is manual; its completion is not recorded.
 
-Reproduce (needs PR #2 merged and Ollama running; from the repo root):
+Reproduce (Ollama running; from the repo root):
 
 ```sh
 python -m bench.run --mode ours       # writes bench/results_ours.json
@@ -117,7 +123,7 @@ The playbooks are in `bench/playbooks.py`, the consistency checks in
 ## Demo
 A 3-minute walkthrough script is in [docs/DEMO.md](docs/DEMO.md). The judges will
 see a live showcase; skip the script's recording instructions and the cut canary
-login step. No recorded video or completed benchmark is claimed.
+login step. No recorded video is claimed; benchmark artifacts are linked above.
 
 **Local rehearsal report.** Below is the real HTML report (`python -m canarynet.report`)
 from one local loopback SSH session against `main` at `ad838b6`, started with
