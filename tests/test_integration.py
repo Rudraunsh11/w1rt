@@ -8,7 +8,7 @@ from canarynet.router import router
 from canarynet.state.session import Result, Session
 
 TEAM_MODULES = ["canarynet.router.handlers", "canarynet.llm.adapter",
-                "canarynet.attack.logger", "canarynet.attack.rules"]
+                "canarynet.logger", "canarynet.attack.rules"]
 
 
 def _missing(name):
