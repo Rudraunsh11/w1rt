@@ -4,12 +4,14 @@ from copy import deepcopy
 import pytest
 
 from canarynet.router.handlers import HANDLERS, command
+from canarynet.state.session import KERNEL
 
 
 @pytest.mark.parametrize("name,argv,expected", [
     ("pwd", [], "/home/admin\n"), ("whoami", [], "admin\n"),
     ("hostname", [], "web-prod-01\n"), ("uname", [], "Linux\n"),
-    ("uname", ["-a"], "Linux web-prod-01 5.15.0-91-generic #101-Ubuntu SMP x86_64 GNU/Linux\n"),
+    ("uname", ["-a"], f"Linux web-prod-01 {KERNEL} #101-Ubuntu SMP x86_64 GNU/Linux\n"),
+    ("uname", ["-r"], KERNEL + "\n"),
     ("id", [], "uid=1000(admin) gid=1000(admin) groups=1000(admin),27(sudo)\n"),
     ("cat", ["note.txt"], "hello\n"), ("cat", ["empty"], ""),
 ])

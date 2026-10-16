@@ -7,7 +7,7 @@ changes: they use Session methods directly when they need to mutate state.
 
 import posixpath
 
-from canarynet.state.session import Result
+from canarynet.state.session import KERNEL, Result
 
 
 HANDLERS = {}
@@ -161,7 +161,7 @@ def uname(session, argv):
     if "a" in flags:
         flags = set("snrvmo")
     fields = [("s", "Linux"), ("n", session.env.get("HOSTNAME", "web-prod-01")),
-              ("r", "5.15.0-91-generic"), ("v", "#101-Ubuntu SMP"),
+              ("r", KERNEL), ("v", "#101-Ubuntu SMP"),
               ("m", "x86_64"), ("o", "GNU/Linux")]
     return _result(" ".join(value for key, value in fields if key in flags) + "\n")
 
