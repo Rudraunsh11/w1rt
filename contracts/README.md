@@ -49,6 +49,15 @@ For `set_env`, `path` is the variable name and `content` is the value.
 - Rudraunsh: `handlers.py`, `logger.py`, `rules.py`, `report.py`, `web.py`
 - Aayush: `adapter.py`, `validator.py`, `guard.py`, `ssh.py`, bench playbooks and checkers
 
-VERIFY with owners (not fixed by the contract yet): the exact file paths of
-`handlers.py` and `logger.py`, the `ask_model` argument list, and the handler
-signature (assumed `handler(session, argv) -> Result`).
+## Router facts (as built in S2)
+- `ask_model(session, line)` returns a validated `Result` or `None` (confirmed from Aayush's
+  adapter). The router also accepts a schema dict. The validator must NOT mutate the session;
+  the router applies `state_changes` exactly once.
+- Handlers: `HANDLERS[cmd](session, argv) -> Result`. Handlers change the session directly;
+  the router ignores a handler's `state_changes`.
+- `answered_by` is one of `code`, `model`, `not_found`, `model:handler_error`.
+- `log_event` is called positionally in contract order.
+- `snapshot()` keys: `user, host, os, cwd, home, cwd_listing, recent_commands`.
+
+VERIFY with owners: the paths `canarynet/router/handlers.py`, `canarynet/attack/logger.py`,
+`canarynet/attack/rules.py` (the router imports these; it uses stand-ins until they are merged).
