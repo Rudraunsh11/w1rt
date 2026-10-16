@@ -1,5 +1,9 @@
 # Demo script (3 minutes)
 
+This is the script to follow, **not a record of a completed run**. It needs PR #2
+(SSH front, model adapter) and PR #10 (canaries in SSH sessions) merged on `main`.
+Step 1:55 (canary login) is cut in this release; skip it.
+
 Setup before recording:
 - Ollama running on `127.0.0.1:11434` with `qwen2.5:1.5b`; send one warm-up prompt
   (`ollama run qwen2.5:1.5b "say ok"`) so the first model answer is not a cold start.

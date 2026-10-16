@@ -8,8 +8,11 @@ try with MITRE ATT&CK tags.
 - Only unknown commands go to a small local model (Ollama, Qwen2.5 1.5B).
 - Every model reply is validated before the state changes.
 
-> Status: hackathon build (v0.1). Demo video: _TBD link_. Results: see [Results](#results).
-> Everything below describes what was run and measured; anything not yet confirmed is marked VERIFY.
+> **Integration status (update at submit):** state, router, 14 code handlers, canary
+> registry, JSONL logging and the HTML report are on `main`. The SSH front, the model
+> adapter and the benchmark runner arrive with PR #2, and canary planting in SSH
+> sessions with PR #10; until both are merged `python -m canarynet` cannot start.
+> Benchmark: **not run yet**. Demo video: **not recorded yet**.
 
 ## Safety
 Loopback only (`127.0.0.1`), visitor input is never executed, no real credentials.
@@ -96,10 +99,13 @@ any other project.
 | Commands run | _TBD_ | _TBD_ |
 
 Model: `qwen2.5:1.5b` via Ollama, temperature 0, seed 42. Hardware: _TBD (from
-`host_metadata` in `bench/results_*.json`)_. Both modes ran once each, on the same
-machine, from the same commit (_TBD commit hash_).
+`host_metadata` in `bench/results_*.json`)_.
 
-Reproduce (Ollama running, from the repo root):
+**Planned procedure (not yet run):** both modes once each, on the same machine,
+from the same commit; record that commit hash here (_TBD_). Warm-up is manual
+(`ollama run qwen2.5:1.5b "say ok"`); `bench.run` does not warm up.
+
+Reproduce (needs PR #2 merged and Ollama running; from the repo root):
 
 ```sh
 python -m bench.run --mode ours       # writes bench/results_ours.json
@@ -125,8 +131,10 @@ A 3-minute walkthrough script is in [docs/DEMO.md](docs/DEMO.md). Video: _TBD li
   complete defence.
 - **ATT&CK tags are rule-based** on command names and selected arguments; they
   label attempts, not proven success.
-- **Canaries live in memory** for one running process; reuse is only detected
-  while that process runs. _VERIFY at submit: canary login pivot shipped or cut._
+- **Canaries live in memory** for one running process. Each SSH session gets its
+  own planted `.env` and `~/.aws/credentials` (PR #10); checking for reuse at SSH
+  login is **not wired** in this release, so reuse is detected only by calling
+  `registry.check()`.
 - **Benchmark scope.** One run per mode, one machine, our own playbooks and
   checks; no variance estimate.
 - **"Local and free" is not unique.** Cowrie's LLM backend and LLMHoney also
