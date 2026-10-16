@@ -10,7 +10,7 @@ from canarynet.fronts.ssh import create_ssh_server, DEFAULT_LOGINS
 async def test_ssh_safety_binding_refusal():
     """Verifies that binding to any host other than 127.0.0.1 is rejected immediately."""
     with pytest.raises(ValueError, match="Safety violation"):
-        await create_ssh_server(host="0.0.0.0", port=2223)
+        await create_ssh_server(host="10.0.0.1", port=2223)
 
     with pytest.raises(ValueError, match="Safety violation"):
         await create_ssh_server(host="192.168.1.10", port=2223)

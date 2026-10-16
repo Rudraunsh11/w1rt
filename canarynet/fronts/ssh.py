@@ -23,9 +23,9 @@ DEFAULT_LOGINS = {
 
 DEFAULT_BANNER = (
     "Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.15.0-58-generic x86_64)\r\n\r\n"
-    " * Documentation:  https://help.ubuntu.com\r\n"
-    " * Management:     https://landscape.canonical.com\r\n"
-    " * Support:        https://ubuntu.com/advantage\r\n\r\n"
+    " * Documentation:  help.ubuntu.com\r\n"
+    " * Management:     landscape.canonical.com\r\n"
+    " * Support:        ubuntu.com/advantage\r\n\r\n"
     "Last login: Fri Oct 16 10:14:02 2026 from 127.0.0.1\r\n"
 )
 
